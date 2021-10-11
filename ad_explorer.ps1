@@ -1,15 +1,3 @@
-﻿<#	
-	.NOTES
-	===========================================================================
-	 Created with: 	SAPIEN Technologies, Inc., PowerShell Studio 2018 v5.5.150
-	 Created on:   	31.08.2021 14:44
-	 Created by:   	michel
-	 Organization: 	
-	 Filename:     	ad_explorer.ps1
-	===========================================================================
-	.DESCRIPTION
-		A description of the file.
-#>
 
 # Greg Toombs, November 2013
 
