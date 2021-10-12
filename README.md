@@ -101,8 +101,8 @@ Just download the latest MitchPatch.exe, run it and perform the single stages st
 ### Prerequisites
 
 The following prerequisites must be met:
-* Internet-Connection
-* PowerShell v.5 and up
+* Internet-Connection (System from which MitchPatch is executed)
+* PowerShell v.5.1 and up
 
 
 ### Installation
