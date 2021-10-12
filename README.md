@@ -37,8 +37,6 @@
   <p align="center">
     MitchPatch is an open source Windows patching tool based on PowerShell.
     <br />
-    <a href="https://github.com/MitchPatch/MitchPatch"><strong>Explore the docs »</strong></a>
-    <br />
     <br />
     <a href="https://github.com/MitchPatch/MitchPatch/issues">Report Bug</a>
     ·
