@@ -11,6 +11,7 @@ function receiveupdates
 		$dir_processing = "$sys_temp\MitchPatch\processing"
 		$dir_kb = "$sys_temp\MitchPatch\kb"
 		$dir_update_progress = "$sys_temp\MitchPatch\update_progress"
+		$dir_module = "$sys_temp\MitchPatch\module"
 		
 		function WriteStatus
 		{
@@ -22,7 +23,7 @@ function receiveupdates
 			$update_progress_final | Export-Csv -Path "$dir_processing\update_progress.csv" -NoTypeInformation
 			$do_update = $false
 		}
-		
+		Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 		#starts up a remote powershell session to the computer
 		if ($cred -eq "")
 		{
@@ -48,24 +49,17 @@ function receiveupdates
 			{
 				invoke-command -ComputerName $c -Credential $cred -ScriptBlock { Stop-Process -Name "powershell" -force }
 			}
-			# Installing Prerequisites on Remote-System
+			# Create PsSession and copy PsWindowsUpdate-Module to the destination system
 			if ($cred -eq "")
 			{
-				invoke-command -ComputerName $c -ScriptBlock { Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force } -ErrorAction SilentlyContinue
+				$pssession = New-PSSession –ComputerName $c
 			}
 			else
 			{
-				invoke-command -ComputerName $c -Credential $cred -ScriptBlock { Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force } -ErrorAction SilentlyContinue
+				$pssession = New-PSSession –ComputerName $c -Credential $cred
 			}
-			if ($cred -eq "")
-			{
-				invoke-command -ComputerName $c -ScriptBlock { install-module pswindowsupdate -force }
-			}
-			else
-			{
-				invoke-command -ComputerName $c -Credential $cred -ScriptBlock { install-module pswindowsupdate -force }
-				
-			}
+			Copy-Item "$dir_module\PSWindowsUpdate" -Destination "$env:programfiles\windowspowershell\modules" -ToSession $pssession -Recurse
+			$pssession | Remove-PSSession
 			if ($cred -eq "")
 			{
 				invoke-command -ComputerName $c -ScriptBlock { Import-Module PSWindowsUpdate -force }
@@ -118,6 +112,9 @@ function receiveupdates
 		}
 	}
 	get_cred
+	
+	Save-Module -Name "PsWindowsUpdate" -Path "$dir_module"
+	
 	$to_update = Import-Csv "$dir_processing\output_to_update.csv" | Select-Object -ExpandProperty System
 	
 	ForEach ($c in $to_update)
@@ -167,7 +164,7 @@ function receiveupdates
 		$datagridview2.DataSource = [System.Collections.ArrayList]$update_progress_final = [array](Import-Csv -Path "$dir_processing\update_progress.csv")
 		Start-Sleep -Seconds 1
 	}
-	
+	$PowerShell.RunspacePool.Dispose()
 	# Collect Status and show the result
 	$datagridview2.DataSource = [System.Collections.ArrayList]$update_progress_final = [array](Import-Csv -Path "$dir_processing\update_progress.csv")
 }
