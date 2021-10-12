@@ -112,7 +112,7 @@ function receiveupdates
 		}
 	}
 	get_cred
-	
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	Save-Module -Name "PsWindowsUpdate" -Path "$dir_module"
 	
 	$to_update = Import-Csv "$dir_processing\output_to_update.csv" | Select-Object -ExpandProperty System
